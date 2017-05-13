@@ -11,8 +11,15 @@ html, body {
   font-family: "Arial", Arial, sans-serif;
 }
 
+body {
+  background-color: #eee;
+}
+
 #main_wrapper {
-  margin: 0px 20px;
+  margin: 0px auto;
+  width: 1000px;
+  background-color: white;
+  height: 100%;
 }
 
 #content {
@@ -42,4 +49,19 @@ html, body {
 
 #menu li a:hover {
   background-color: #111111;
+}
+
+td, th {
+  border: 1px solid #ddd;
+  text-align: center;
+  padding: 5px;
+}
+
+thead tr {
+  background-color: #333333;
+  color: white;
+}
+
+.input_form {
+  margin-bottom: 20px;
 }

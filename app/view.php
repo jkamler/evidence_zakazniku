@@ -20,11 +20,7 @@
     </div>
     <div id="content">
       <?php
-        if (!isset($data)) {
-          echo "Chyba";
-        } else {
-          echo $data;
-        }
+        echo $data;
       ?>
     </div>
   </div>

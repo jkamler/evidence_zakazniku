@@ -41,11 +41,18 @@ function klienti() {
 //page of states
 function stavy() {
   $insertForm = '
-  <form action="index.php?action=insert_stav" method="post">
-  Nový stav <input type="text" name="stav">
-  <input type="submit">
-  </form>';
+  <div class="input_form">
+    <form action="index.php?action=insert_stav" method="post">
+      Nový stav: <input type="text" name="stav">
+      <input type="submit" value="Vložit">
+    </form>
+  </div>';
+//  $data['form'] = $insertForm;
   $data = $insertForm;
+  include_once("app/class/DBClass.php");
+  $myModel = new DBClass;
+//  $data['table'] = $myModel->listStates();
+  $data .= $myModel->listStates();
   require_once("app/view.php");
 }
 
@@ -63,7 +70,5 @@ function insert_stav() {
     header('Location: index.php?action=stavy');
   }
 }
-
-function
 
 ?>
