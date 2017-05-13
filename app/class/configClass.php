@@ -1,8 +1,8 @@
 <?php
-class connectionSettings {
+class configClass {
   const SERVERNAME = "localhost";
 	const USERNAME = "root";
 	const PASSWORD = "jara777";
-	const DBNAME = "klienti";
+	const DBNAME = "evidence";
 }
 ?>
