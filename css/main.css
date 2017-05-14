@@ -22,6 +22,11 @@ body {
   height: auto;
 }
 
+h2 {
+  font-size: 1.2em;
+  font-weight: bold;
+}
+
 #content {
   margin: 20px;
 }
@@ -65,6 +70,19 @@ thead tr {
 
 .input_form {
   margin-bottom: 20px;
+  margin-top: 20px;
+}
+
+.input_container {
+  width: 500px;
+  clear: both;
+}
+
+.input_container input, select {
+  width: 100%;
+  clear: both;
+  margin-bottom: 10px;
+  margin-top: 5px;
 }
 
 span.edit {
@@ -75,6 +93,12 @@ span.edit {
 
 a {
   color: black;
+}
+
+label.error {
+  display: block;
+  color: red;
+  margin-bottom: 10px;
 }
 
 #footer {

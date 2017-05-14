@@ -7,15 +7,15 @@
   <title><?php echo $title; ?></title>
   <link rel="stylesheet" href="css/reset.css" type="text/css">
   <link rel="stylesheet" href="css/main.css" type="text/css">
-  <link rel="stylesheet" href="js/themes/blue/style.css" type="text/css" id="" media="print, projection, screen" />  
+  <link rel="stylesheet" href="js/themes/blue/style.css" type="text/css" id="" media="print, projection, screen" />
   <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
   <script src='js/jquery.tablesorter.min.js'></script>
   <script>
   $(document).ready(function() {
     // call the tablesorter plugin
     $("table").tablesorter({
-        // sort on the first column and third column, order asc
-        sortList: [[0,0],[2,0]]
+        // sort on the first column, order asc
+        sortList: [[0,0]]
     });
   });
   </script>

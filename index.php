@@ -12,7 +12,7 @@ if (isset($_GET["action"])) {
 //tomuhle nerozumim proc to funguje. V $action je retezec a kdyz za nej dam zavorku, tak mi spusti danou funkci - tzn. if pod tim nemusi byt
 /*echo $action();*/
 
-/*vyber funkce podle $action*/
+//vyber funkce podle $action
 if ($action == "index") {
   return index();
 }
@@ -31,6 +31,12 @@ if ($action == "delete_stav") {
 if ($action == "edit_stav") {
   return edit_stav();
 }
+if ($action == "new_klient") {
+  return new_klient();
+}
+if ($action == "insert_new_klient") {
+  return insert_new_klient();
+}
 
 
 //basic page
@@ -43,8 +49,59 @@ function index() {
 //page of clients
 function klienti() {
   $title = "Evidence zákazníků - Evidence Klientů";
-  $data = "klienti";
+  $data = '
+  <div class="input_form">
+    <a href="index.php?action=new_klient"> + Nový klient</a>
+  </div>';
   require_once("app/view.php");
+}
+
+//loads form for inserting new client
+function new_klient() {
+  //getting Select list of states
+  include_once("app/class/DBClass.php");
+  $myModel = new DBClass;
+  $mySelectList = $myModel->selectListStates();
+
+  $title = "Evidence zákazníků - Nový klient";
+  $data = "<h2>Zadejte nového klienta:</h2><br>";
+  $data .= '
+  <div class="input_form">
+    <div class="input_container">
+      <form action="index.php?action=insert_new_klient" method="post" id="insertstates">
+        <label>Název klienta</label> <input type="text" name="nazev">
+        <label>Kontaktní osoba</label> <input type="text" name="kontakt">
+        <label>Kontaktní email</label> <input type="text" name="email">
+        <label>Telefon</label> <input type="text" name="telefon">
+        <label>Stav klienta</label>';
+  $data .= $mySelectList;
+  $data .= '<label>Poznámka</label> <input type="text" name="poznamka">
+        <input type="submit" value="Vložit">
+      </form>
+    </div>
+  </div>';
+  $JSfile = '<script src="js/jquery-validation/dist/jquery.validate.js"></script>
+  <script>
+    $("#insertstates").validate({
+      rules: {
+        nazev: "required",
+        email: {
+          email:true
+        },
+      },
+      messages: {
+        nazev: "Vložte prosím název klienta",
+        email: "Zadejte platný email"
+      }
+    });
+  </script>';
+  require_once("app/view.php");
+}
+
+//calls function for insert
+function insert_new_klient() {
+
+  header('Location: index.php?action=klienti');
 }
 
 //page of states

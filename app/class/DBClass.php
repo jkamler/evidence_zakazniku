@@ -20,6 +20,9 @@ message
     file_put_contents($file, $current);
   }
 
+
+
+
 /*
 Function for inserting new state of customer into DB
 
@@ -67,7 +70,7 @@ Value of new state
 
 
   /*
-  Function for listing all states of customers
+  Function for listing all states of customers at states
 
   @return boolean || string
   0 - error || HTML document of states
@@ -134,6 +137,60 @@ Value of new state
   			return 0;
       }
     }
+
+
+    /*
+    Function for creating select list of customers at client manegement
+
+    @return boolean || string
+    0 - error || HTML document of states
+    */
+
+      public function selectListStates() {
+        try{
+    			require_once ("app/class/configClass.php");
+    			$conn = mysqli_connect(configClass::SERVERNAME, configClass::USERNAME, configClass::PASSWORD, configClass::DBNAME);
+    			if (!$conn) {
+    				throw new ExceptionConn;
+    			}
+          mysqli_set_charset($conn, 'utf8');
+          $sql = "SELECT * FROM stavy;";
+          $result = mysqli_query($conn, $sql);
+          if (!$result) {
+            throw new ExceptionQuery;
+          }
+//          self::logEvents($sql);
+          //building select list
+          $myHTML = "\n<select name='states' form='insertstates'>\n";
+          while($row = mysqli_fetch_assoc($result)) {
+            $myHTML .= "\t<option value='". $row['id_stav'] . "'>" . $row['stav'] . "</option>\n";
+          }
+          $myHTML .= "</select>\n";
+
+    			mysqli_close($conn);
+    			return $myHTML;
+
+    		}
+    		catch(ExceptionConn $e) {
+    			self::logEvents("Chyba: nepovedlo se pripojit k DB: " . mysqli_connect_error() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+    			return 0;
+    		}
+    		catch(ExceptionQuery $e) {
+    			mysqli_close($conn);
+    			self::logEvents("Chyba: nepovedlo se provest dotaz: " . $sql . "<br>" . mysqli_error($conn) . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+    			return 0;
+    		}
+    		catch(Exception $e) {
+          self::logEvents("Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+    			return 0;
+    		}
+    		catch(Error $e) {
+    			self::logEvents("Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+    			return 0;
+        }
+      }
+
+
 
 
 /*
