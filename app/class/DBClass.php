@@ -46,8 +46,85 @@ message
     }
 
 
+    /*
+    Function for listing customers
+
+    @param string $condition
+    condition for searchng records in table klienti
+
+    @return boolean || string
+    0 - error || HTML document of states
+    */
+
+      public function listCustomers($condition) {
+        try{
+    			require_once ("app/class/configClass.php");
+    			$conn = mysqli_connect(configClass::SERVERNAME, configClass::USERNAME, configClass::PASSWORD, configClass::DBNAME);
+    			if (!$conn) {
+    				throw new ExceptionConn;
+    			}
+          mysqli_set_charset($conn, 'utf8');
+          $sql = "SELECT * FROM klienti WHERE $condition;";
+          $result = mysqli_query($conn, $sql);
+          if (!$result) {
+            throw new ExceptionQuery;
+          }
+          self::logEvents($sql);
+          //building HTML table
+/*
+          - Datum vložení,
+          - Název firmy,
+          - Kontaktní osoba,
+          - E-mail,
+          - Stav,
+          - Poznámka (možnost editace / smazání)
+*/
+          $myHTML = "
+      <table>
+        <thead>
+          <tr>
+            <th>Nazev</th><th>Kontakt</th><th>Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          ";
+
+          while($row = mysqli_fetch_assoc($result)) {
+            $myHTML .= "<tr> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> </tr>";
+          }
+
+          $myHTML .=
+        "</tbody>
+      </table>
+      ";
+
+    			mysqli_close($conn);
+    			return $myHTML;
+    		}
+    		catch(ExceptionConn $e) {
+    			self::logEvents("Chyba: nepovedlo se pripojit k DB: " . mysqli_connect_error() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+    			return 0;
+    		}
+    		catch(ExceptionQuery $e) {
+    			mysqli_close($conn);
+    			self::logEvents("Chyba: nepovedlo se provest dotaz: " . $sql . "<br>" . mysqli_error($conn) . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+    			return 0;
+    		}
+    		catch(Exception $e) {
+          self::logEvents("Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+    			return 0;
+    		}
+    		catch(Error $e) {
+    			self::logEvents("Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+    			return 0;
+        }
+      }
+
+
+
+
   /*
-  Function for inserting new client into DB
+  Function for inserting new customer into DB
 
   @param string $nazev
   Value of new customer

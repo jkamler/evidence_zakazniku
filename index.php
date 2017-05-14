@@ -52,11 +52,43 @@ function index() {
 
 //page of clients
 function klienti() {
+  //get_val - send by AJAX in customers.js thrue POST
+  //if variable get_val exist at POST, I am typeing text into fulltext search box
+//  if ((isset($_POST['get_val']) && (count($_POST['get_val']) > 0))) {
+  if (isset($_POST['get_val'])) {
+    $get_val = htmlspecialchars($_POST['get_val']);
+    //fulltext searching box is empty
+    if (strlen($get_val) == 0) {
+      $condition = 1;
+    } else {
+//      $condition = " MATCH(nazev, kontakt, email, telefon, poznamka) AGAINST('$get_val' IN NATURAL LANGUAGE MODE)";
+      $condition = " MATCH(nazev, kontakt, email, telefon, poznamka) AGAINST('*$get_val*' IN BOOLEAN MODE)";
+    }
+    include_once("app/class/DBClass.php");
+    $myModel = new DBClass;
+    $myCustomerList = $myModel->listCustomers($condition);
+    echo $myCustomerList;
+    exit;
+  }
+
   $title = "Evidence zákazníků - Evidence Klientů";
+  //inserting new customer
   $data = '
   <div class="input_form">
     <a href="index.php?action=new_klient"> + Nový klient</a>
   </div>';
+  //searching customers
+  $data .= "<div id='search_box'>
+    <input type='text' name='get_val' id='find' placeholder='Fulltextové vyhledávání'>
+  </div>";
+  include_once("app/class/DBClass.php");
+  $myModel = new DBClass;
+  $myCustomerList = $myModel->listCustomers("1");
+
+  $data .= "<div class='table' id='result_table'>\n$myCustomerList\n</div>";
+
+  $JSfile = "<script src='js/customers.js'></script>\n";
+
   require_once("app/view.php");
 }
 
