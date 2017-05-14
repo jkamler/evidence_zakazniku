@@ -5,7 +5,7 @@ error_reporting(E_ALL);
 
 if (isset($_GET["action"])) {
   $action = $_GET["action"];
-} else {
+} else { //default action is index
   $action = "index";
 }
 
@@ -25,21 +25,32 @@ if ($action == "stavy") {
 if ($action == "insert_stav") {
   return insert_stav();
 }
+if ($action == "delete_stav") {
+  return delete_stav();
+}
+if ($action == "edit_stav") {
+  return edit_stav();
+}
+
 
 //basic page
 function index() {
+  $title = "Evidence zákazníků - Úvod";
   $data = "Rozhraní pro správu klientů a evidenci poznámek <br><br>Celkový počet evidovaných klientů: " . 21;
   require_once("app/view.php");
 }
 
 //page of clients
 function klienti() {
+  $title = "Evidence zákazníků - Evidence Klientů";
   $data = "klienti";
   require_once("app/view.php");
 }
 
 //page of states
 function stavy() {
+  $JSfile = "<script src='js/edit.js'></script>\n";
+  $title = "Evidence zákazníků - Stavy zákazníků";
   $insertForm = '
   <div class="input_form">
     <form action="index.php?action=insert_stav" method="post">
@@ -47,11 +58,9 @@ function stavy() {
       <input type="submit" value="Vložit">
     </form>
   </div>';
-//  $data['form'] = $insertForm;
   $data = $insertForm;
   include_once("app/class/DBClass.php");
   $myModel = new DBClass;
-//  $data['table'] = $myModel->listStates();
   $data .= $myModel->listStates();
   require_once("app/view.php");
 }
@@ -69,6 +78,24 @@ function insert_stav() {
   } else { //string is empty - redirect
     header('Location: index.php?action=stavy');
   }
+}
+
+//deleting state of customer
+function delete_stav() {
+  include_once("app/class/DBClass.php");
+  $myModel = new DBClass;
+  $myModel->deleteState($_GET["id"]);
+  header('Location: index.php?action=stavy');
+}
+
+function edit_stav() {
+  include_once("app/class/DBClass.php");
+  $myModel = new DBClass;
+  echo "cau";
+  //I am getting this variables via AJAX at edit.js
+  $myModel->updateState($_GET["id"], $_GET["value"]);
+
+//  header('Location: index.php?action=stavy');
 }
 
 ?>
