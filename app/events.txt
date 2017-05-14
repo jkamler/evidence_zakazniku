@@ -27,3 +27,9 @@
 2017-05-14 11:40:56 UPDATE stavy SET stav = 'Demo' WHERE id_stav = 62;
 2017-05-14 11:40:56 SELECT * FROM stavy;
 2017-05-14 11:57:40 SELECT * FROM stavy;
+2017-05-14 16:00:38 INSERT INTO klienti (nazev, kontakt, email, telefon, id_stav, poznamka) VALUES ('test', 'ddd', '', '777777', 54, 'sfg');
+2017-05-14 16:02:07 Chyba: nepovedlo se provest dotaz: INSERT INTO klienti (nazev, kontakt, email, telefon, id_stav, poznamka) VALUES ('Interneti experti', 'Franta Omacka', '', '789456123', 53, 'Zrušit Smlouvu');<br>. File: /var/www/html/evidence/app/class/DBClass.php, line: 59
+2017-05-14 16:06:16 INSERT INTO klienti (nazev, kontakt, email, telefon, id_stav, poznamka) VALUES ('nereknu', 'taky nereknu', '', '123456789', 53, 'Takove klienty nechceme, zrusit smlouvu');
+2017-05-14 16:11:06 SELECT * FROM stavy;
+2017-05-14 16:11:16 SELECT * FROM stavy;
+2017-05-14 16:29:03 INSERT INTO klienti (nazev, kontakt, email, telefon, id_stav, poznamka) VALUES ('ddd', '', '', '', 53, '');

@@ -20,7 +20,91 @@ message
     file_put_contents($file, $current);
   }
 
+  /*
+  Function for counting customes
 
+  @return numeric $count
+  Total count of customers
+  */
+    public function countCustomers() {
+			require_once ("app/class/configClass.php");
+			$conn = mysqli_connect(configClass::SERVERNAME, configClass::USERNAME, configClass::PASSWORD, configClass::DBNAME);
+			if (!$conn) {
+        self::logEvents("Chyba: nepovedlo se pripojit k DB: " . mysqli_connect_error() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+				exit("nepovedlo se pripojit k BD");
+			}
+      mysqli_set_charset($conn, 'utf8');
+      $sql = "SELECT count(*) FROM klienti;";
+      $result = mysqli_query($conn, $sql);
+      if (!$result) {
+        self::logEvents("Chyba: nepovedlo se provest dotaz: " . $sql . "<br>" . mysqli_error($conn) . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+				exit("nepovedlo se provest dotaz");
+      }
+			mysqli_close($conn);
+      $result = mysqli_fetch_array($result);
+      return $result[0];
+    }
+
+
+  /*
+  Function for inserting new client into DB
+
+  @param string $nazev
+  Value of new customer
+
+  @param string $kontakt
+  Value of new contact person
+
+  @param string $email
+  Value of contact email
+
+  @param string $telefon
+  Value of new contact telephone
+
+  @param string $states
+  Value of ID of state
+
+  @param string $poznamka
+  Value of new comment
+
+  @return boolean
+  0 - error, 1 - OK
+  */
+
+    public function insertNewCustomer($nazev, $kontakt, $email, $telefon, $states, $poznamka) {
+      try{
+  			require_once ("app/class/configClass.php");
+  			$conn = mysqli_connect(configClass::SERVERNAME, configClass::USERNAME, configClass::PASSWORD, configClass::DBNAME);
+  			if (!$conn) {
+  				throw new ExceptionConn;
+  			}
+        $sql = "INSERT INTO klienti (nazev, kontakt, email, telefon, id_stav, poznamka) VALUES ('$nazev', '$kontakt', '$email', '$telefon', $states, '$poznamka');";
+        mysqli_set_charset($conn, 'utf8');
+  			if (!mysqli_query($conn, $sql)) {
+  				throw new ExceptionInsert;
+  			}
+        self::logEvents($sql);
+  			mysqli_close($conn);
+  			return 1;
+  		}
+  		catch(ExceptionConn $e) {
+  			self::logEvents("Chyba: nepovedlo se pripojit k DB: " . mysqli_connect_error() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+  			return 0;
+  		}
+  		catch(ExceptionInsert $e) {
+  			mysqli_close($conn);
+        self::logEvents("Chyba: nepovedlo se provest dotaz: " . $sql . "<br>" . mysqli_error($conn) . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+        return 0;
+  		}
+  		catch(Exception $e) {
+        self::logEvents("Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+  			return 0;
+  		}
+  		catch(Error $e) {
+        self::logEvents("Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+  			return 0;
+      }
+    }
 
 
 /*

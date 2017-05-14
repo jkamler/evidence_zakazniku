@@ -41,8 +41,12 @@ if ($action == "insert_new_klient") {
 
 //basic page
 function index() {
+  include_once("app/class/DBClass.php");
+  $myModel = new DBClass;
+  $count = $myModel->countCustomers();
+
   $title = "Evidence zákazníků - Úvod";
-  $data = "Rozhraní pro správu klientů a evidenci poznámek <br><br>Celkový počet evidovaných klientů: " . 21;
+  $data = "Rozhraní pro správu klientů a evidenci poznámek <br><br>Celkový počet evidovaných klientů: " . $count;
   require_once("app/view.php");
 }
 
@@ -100,6 +104,16 @@ function new_klient() {
 
 //calls function for insert
 function insert_new_klient() {
+  $nazev = isset($_POST['nazev']) ? htmlspecialchars($_POST['nazev']) : "";
+  $kontakt = isset($_POST['kontakt']) ? htmlspecialchars($_POST['kontakt']) : "";
+  $email = isset($_POST['email']) ? htmlspecialchars($_POST['email']) : "";
+  $telefon = isset($_POST['telefon']) ? htmlspecialchars($_POST['telefon']) : "";
+  $states = isset($_POST['states']) ? $_POST['states'] : "0";
+  $poznamka = isset($_POST['poznamka']) ? htmlspecialchars($_POST['poznamka']) : "";
+
+  include_once("app/class/DBClass.php");
+  $myModel = new DBClass;
+  $data .= $myModel->insertNewCustomer($nazev, $kontakt, $email, $telefon, $states, $poznamka);
 
   header('Location: index.php?action=klienti');
 }
