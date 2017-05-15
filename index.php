@@ -47,6 +47,38 @@ function index() {
 
   $title = "Evidence zákazníků - Úvod";
   $data = "Rozhraní pro správu klientů a evidenci poznámek <br><br>Celkový počet evidovaných klientů: " . $count;
+  $data .= "<br><br>Specifikace zadání:<br>
+
+1) Evidence klientů - seznam<br>
+- Datum vložení,<br>
+- Název firmy,<br>
+- Kontaktní osoba,<br>
+- E-mail,<br>
+- Stav,<br>
+- Poznámka (možnost editace / smazání)<br>
+<br>
+Filtry pro vyhledávání<br>
+- Fulltext (celé nebo část slova)<br>
+- Podle stavu (zobrazení pouze klientů s přiřazeným konkrétním stavem)<br>
+<br>
+Přidat klienta<br>
+- Název<br>
+- Kontaktní osoba<br>
+- Tel.<br>
+- E-mail<br>
+- Poznámka<br>
+- Stav<br>
+<br>
+2) Stavy klientů<br>
+- seznam nadefinovaných stavů (možnost editace / smazání)<br>
+<br>
+Přidat stav<br>
+- název stavu<br>
+<br>
+3) Doplňkové<br>
+- Přihlašování do rozhraní pod heslem";
+
+
   require_once("app/view.php");
 }
 
@@ -70,20 +102,24 @@ function klienti() {
     echo $myCustomerList;
     exit;
   }
+  include_once("app/class/DBClass.php");
+  $myModel = new DBClass;
 
 //web page is first loaded
   $title = "Evidence zákazníků - Evidence Klientů";
-  //inserting new customer
+
+  //insert new customer
   $data = '
   <div class="input_form">
     <a href="index.php?action=new_klient"> + Nový klient</a>
   </div>';
-  //searching customers
-  $data .= "<div id='search_box'>
-    <input type='text' name='get_val' id='find' placeholder='Fulltextové vyhledávání'>
+
+  //search customers
+  $selectList = $myModel->selectListStates();
+  $data .= "<div id='search_box'>Vyhledávání<br>
+    <input type='text' name='get_val' id='find' placeholder='Hledané slovo'>
+    Stav: $selectList
   </div>";
-  include_once("app/class/DBClass.php");
-  $myModel = new DBClass;
   $myCustomerList = $myModel->listCustomers("1");
 
   $data .= "<div class='table' id='result_table'>\n$myCustomerList\n</div>";
@@ -117,21 +153,7 @@ function new_klient() {
       </form>
     </div>
   </div>';
-  $JSfile = '<script src="js/jquery-validation/dist/jquery.validate.js"></script>
-  <script>
-    $("#insertstates").validate({
-      rules: {
-        nazev: "required",
-        email: {
-          email:true
-        },
-      },
-      messages: {
-        nazev: "Vložte prosím název klienta",
-        email: "Zadejte platný email"
-      }
-    });
-  </script>';
+  $JSfile = "\t<script src='js/jquery-validation/dist/jquery.validate.js'></script>\n\t\t<script src='js/validate.js'></script>";
   require_once("app/view.php");
 }
 

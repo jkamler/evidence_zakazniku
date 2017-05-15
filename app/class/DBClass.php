@@ -79,19 +79,22 @@ message
           - E-mail,
           - Stav,
           - Poznámka (možnost editace / smazání)
-*/
+*/        //select list of states
+
           $myHTML = "
       <table>
         <thead>
           <tr>
-            <th>Datum vložení</th><th>Název</th><th>Kontaktní osoba</th><th>E-mail</th><th>Stav</th><th>Poznámka</th>
+            <th>Datum vložení</th><th>Název firmy</th><th>Kontaktní osoba</th><th>E-mail</th><th>Stav</th><th>Poznámka</th>
           </tr>
         </thead>
         <tbody>
           ";
 
           while($row = mysqli_fetch_assoc($result)) {
-            $myHTML .= "<tr> <td> " . $row['datum_vl'] ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td> " . $row['poznamka'] . " </td> </tr>";
+//            $myHTML .= "<tr> <td> " . $row['datum_vl'] ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td><input type='text' name='poznamka' class='poznamka' value='" . $row['poznamka'] . "' readonly> </td> </tr>";
+            $myHTML .= "<tr> <td> " . date('d.m.Y', strtotime($row['datum_vl'])) ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td><input type='text' name='poznamka' class='poznamka' value='" . $row['poznamka'] . "' readonly> </td> </tr>";
+
           }
 
           $myHTML .=
@@ -316,14 +319,14 @@ Value of new state
     				throw new ExceptionConn;
     			}
           mysqli_set_charset($conn, 'utf8');
-          $sql = "SELECT * FROM stavy;";
+          $sql = "SELECT * FROM stavy ORDER BY 2 ASC;";
           $result = mysqli_query($conn, $sql);
           if (!$result) {
             throw new ExceptionQuery;
           }
 //          self::logEvents($sql);
           //building select list
-          $myHTML = "\n<select name='states' form='insertstates'>\n";
+          $myHTML = "\n<select id='selectListStates' name='states' form='insertstates'>\n";
           while($row = mysqli_fetch_assoc($result)) {
             $myHTML .= "\t<option value='". $row['id_stav'] . "'>" . $row['stav'] . "</option>\n";
           }

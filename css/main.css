@@ -68,6 +68,10 @@ thead tr {
   cursor: pointer;
 }
 
+thead tr th:hover {
+  text-decoration: underline;
+}
+
 .input_form {
   margin-bottom: 20px;
   margin-top: 20px;
@@ -83,6 +87,11 @@ thead tr {
   clear: both;
   margin-bottom: 10px;
   margin-top: 5px;
+}
+
+input.poznamka {
+  border:0px;
+  font-size: 1em;
 }
 
 span.edit {
@@ -101,8 +110,19 @@ label.error {
   margin-bottom: 10px;
 }
 
-div#search_box {
+#search_box {
+  border: 1px dotted grey;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+
+div#search_box select{
   margin-bottom: 15px;
+  width: 188px;
+}
+
+div#search_box input {
+  display: inline;
 }
 
 #footer {
