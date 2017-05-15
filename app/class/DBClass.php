@@ -64,7 +64,8 @@ message
     				throw new ExceptionConn;
     			}
           mysqli_set_charset($conn, 'utf8');
-          $sql = "SELECT * FROM klienti WHERE $condition;";
+//          $sql = "SELECT * FROM klienti WHERE $condition;";
+          $sql = "SELECT datum_vl, nazev, kontakt, email, stav, poznamka FROM klienti NATURAL JOIN stavy WHERE $condition;";
           $result = mysqli_query($conn, $sql);
           if (!$result) {
             throw new ExceptionQuery;
@@ -83,14 +84,14 @@ message
       <table>
         <thead>
           <tr>
-            <th>Nazev</th><th>Kontakt</th><th>Email</th>
+            <th>Datum vložení</th><th>Název</th><th>Kontaktní osoba</th><th>E-mail</th><th>Stav</th><th>Poznámka</th>
           </tr>
         </thead>
         <tbody>
           ";
 
           while($row = mysqli_fetch_assoc($result)) {
-            $myHTML .= "<tr> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> </tr>";
+            $myHTML .= "<tr> <td> " . $row['datum_vl'] ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td> " . $row['poznamka'] . " </td> </tr>";
           }
 
           $myHTML .=

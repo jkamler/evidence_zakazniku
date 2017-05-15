@@ -101,6 +101,10 @@ label.error {
   margin-bottom: 10px;
 }
 
+div#search_box {
+  margin-bottom: 15px;
+}
+
 #footer {
     clear: both;
     position: relative;

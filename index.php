@@ -61,8 +61,8 @@ function klienti() {
     if (strlen($get_val) == 0) {
       $condition = 1;
     } else {
-//      $condition = " MATCH(nazev, kontakt, email, telefon, poznamka) AGAINST('$get_val' IN NATURAL LANGUAGE MODE)";
-      $condition = " MATCH(nazev, kontakt, email, telefon, poznamka) AGAINST('*$get_val*' IN BOOLEAN MODE)";
+//      $condition = " MATCH(nazev, kontakt, email, telefon, poznamka) AGAINST('$get_val*' IN NATURAL LANGUAGE MODE)";
+      $condition = " MATCH(nazev, kontakt, email, telefon, poznamka) AGAINST('$get_val*' IN BOOLEAN MODE)";
     }
     include_once("app/class/DBClass.php");
     $myModel = new DBClass;
@@ -71,6 +71,7 @@ function klienti() {
     exit;
   }
 
+//web page is first loaded
   $title = "Evidence zákazníků - Evidence Klientů";
   //inserting new customer
   $data = '
