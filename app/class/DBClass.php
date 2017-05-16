@@ -64,8 +64,7 @@ message
     				throw new ExceptionConn;
     			}
           mysqli_set_charset($conn, 'utf8');
-//          $sql = "SELECT * FROM klienti WHERE $condition;";
-          $sql = "SELECT datum_vl, nazev, kontakt, email, stav, poznamka FROM klienti NATURAL JOIN stavy WHERE $condition;";
+          $sql = "SELECT id_klient, datum_vl, nazev, kontakt, email, id_stav, stav, poznamka FROM klienti NATURAL JOIN stavy WHERE $condition;";
           $result = mysqli_query($conn, $sql);
           if (!$result) {
             throw new ExceptionQuery;
@@ -93,7 +92,7 @@ message
 
           while($row = mysqli_fetch_assoc($result)) {
 //            $myHTML .= "<tr> <td> " . $row['datum_vl'] ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td><input type='text' name='poznamka' class='poznamka' value='" . $row['poznamka'] . "' readonly> </td> </tr>";
-            $myHTML .= "<tr> <td> " . date('d.m.Y', strtotime($row['datum_vl'])) ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td><input type='text' name='poznamka' class='poznamka' value='" . $row['poznamka'] . "' readonly> </td> </tr>";
+            $myHTML .= "<tr> <td> " . date('d.m.Y', strtotime($row['datum_vl'])) ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td><input type='text' name='poznamka' id='" . $row['id_klient'] . "' class='poznamka' value='" . $row['poznamka'] . "' readonly> </td> </tr>";
 
           }
 
@@ -327,6 +326,7 @@ Value of new state
 //          self::logEvents($sql);
           //building select list
           $myHTML = "\n<select id='selectListStates' name='states' form='insertstates'>\n";
+          $myHTML .= "\t<option value='' selected>Vyber stav</option>\n";
           while($row = mysqli_fetch_assoc($result)) {
             $myHTML .= "\t<option value='". $row['id_stav'] . "'>" . $row['stav'] . "</option>\n";
           }

@@ -78,23 +78,33 @@ Přidat stav<br>
 3) Doplňkové<br>
 - Přihlašování do rozhraní pod heslem";
 
-
   require_once("app/view.php");
 }
 
 //page of clients
 function klienti() {
-  //get_val - send by AJAX in customers.js thrue POST
-  //if variable get_val exist at POST, I am typeing text into fulltext search box
-//  if ((isset($_POST['get_val']) && (count($_POST['get_val']) > 0))) {
-  if (isset($_POST['get_val'])) {
-    $get_val = htmlspecialchars($_POST['get_val']);
-    //fulltext searching box is empty
-    if (strlen($get_val) == 0) {
+//fulltext_val and states_val - send by AJAX in customers.js thrue POST
+//if variable fulltext_val or states_val exist at POST
+  if (isset($_POST['fulltext_val']) || (isset($_POST['states_val']))) {
+    isset($_POST['fulltext_val']) ? $fulltext_val = htmlspecialchars($_POST['fulltext_val']) : $fulltext_val = FALSE;
+    isset($_POST['states_val']) ? $states_val = $_POST['states_val'] : $states_val = FALSE;
+
+    // searching only in displayed colums kontakt email poznamka datum_vl stav
+    //fulltext box and select list are filled
+    if (($fulltext_val != FALSE) && ($states_val != FALSE)) {
+      $condition = " (nazev LIKE '%$fulltext_val%' OR kontakt LIKE '%$fulltext_val%' OR email LIKE '%$fulltext_val%' OR poznamka LIKE '%$fulltext_val%' OR datum_vl LIKE '%$fulltext_val%') AND (id_stav = '$states_val')";
+    }
+    //fulltext box neither select list are filled
+    if (($fulltext_val == FALSE) && ($states_val == FALSE)) {
       $condition = 1;
-    } else {
-//      $condition = " MATCH(nazev, kontakt, email, telefon, poznamka) AGAINST('$get_val*' IN NATURAL LANGUAGE MODE)";
-      $condition = " MATCH(nazev, kontakt, email, telefon, poznamka) AGAINST('$get_val*' IN BOOLEAN MODE)";
+    }
+    //only fulltext box is filled
+    if (($fulltext_val != FALSE)  && (!$states_val)) {
+      $condition = " nazev LIKE '%$fulltext_val%' OR kontakt LIKE '%$fulltext_val%' OR email LIKE '%$fulltext_val%' OR poznamka LIKE '%$fulltext_val%' OR datum_vl LIKE '%$fulltext_val%'";
+    }
+    //only select list is selected
+    if ((!$fulltext_val) && ($states_val != FALSE)) {
+      $condition = " id_stav = '$states_val'";
     }
     include_once("app/class/DBClass.php");
     $myModel = new DBClass;
@@ -102,10 +112,11 @@ function klienti() {
     echo $myCustomerList;
     exit;
   }
+
   include_once("app/class/DBClass.php");
   $myModel = new DBClass;
 
-//web page is first loaded
+  // first load of web page
   $title = "Evidence zákazníků - Evidence Klientů";
 
   //insert new customer
@@ -128,6 +139,7 @@ function klienti() {
 
   require_once("app/view.php");
 }
+
 
 //loads form for inserting new client
 function new_klient() {

@@ -17,6 +17,9 @@ $('#insertstates').validate({
     poznamka: {
       maxlength: 50
     },
+    states: {
+      required: true,
+    },
   },
   messages: {
     nazev: {
