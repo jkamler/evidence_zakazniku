@@ -68,15 +68,6 @@ thead tr {
   cursor: pointer;
 }
 
-thead tr th:hover {
-  text-decoration: underline;
-}
-
-.input_form {
-  margin-bottom: 20px;
-  margin-top: 20px;
-}
-
 .input_container {
   width: 500px;
   clear: both;
@@ -108,6 +99,22 @@ label.error {
   display: block;
   color: red;
   margin-bottom: 10px;
+}
+
+#edit {
+  margin-bottom: 20px;
+}
+
+#edit .zmena {
+  padding: 5px;
+  margin-right: 10px;
+  display: inline;
+  cursor: pointer;
+  border: 1px solid grey;
+}
+
+#edit .zmena:hover {
+  background-color: #eee;
 }
 
 #search_box {

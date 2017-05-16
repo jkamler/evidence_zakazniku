@@ -120,10 +120,17 @@ function klienti() {
   $title = "Evidence zákazníků - Evidence Klientů";
 
   //insert new customer
-  $data = '
-  <div class="input_form">
-    <a href="index.php?action=new_klient"> + Nový klient</a>
-  </div>';
+  $data = "
+  <div id='edit'>
+    <a class='zmena' href='index.php?action=new_klient'> + Nový klient</a>
+  </div>";
+
+  //edit notes
+  $data .= "<div id='edit'>
+    <div class='zmena' id='editace'>Editovat poznámku</div><div class='zmena' id='mazani'>Smazat poznámku</div>
+  </div>
+
+  ";
 
   //search customers
   $selectList = $myModel->selectListStates();
