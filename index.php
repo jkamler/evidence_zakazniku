@@ -37,6 +37,16 @@ if ($action == "new_klient") {
 if ($action == "insert_new_klient") {
   return insert_new_klient();
 }
+if ($action == "delete_poznamka") {
+  return delete_poznamka();
+}
+if ($action == "edit_poznamka") {
+  return edit_poznamka();
+}
+if ($action == "update_poznamka") {
+  return update_poznamka();
+}
+
 
 
 //basic page
@@ -125,9 +135,6 @@ function klienti() {
     <a class='zmena' href='index.php?action=new_klient'> + Nový klient</a>
   </div>";
 
-  //edit notes
-//  $data .= "<div id='edit'> <div class='zmena' id='editace'>Edit</div><div class='zmena' id='mazani'>X</div> </div>";
-
   //search customers
   $selectList = $myModel->selectListStates();
   $data .= "<div id='search_box'>Vyhledávání<br>
@@ -141,6 +148,46 @@ function klienti() {
   $JSfile = "<script src='js/customers.js'></script>\n";
 
   require_once("app/view.php");
+}
+
+//deleting notes
+function delete_poznamka() {
+  include_once("app/class/DBClass.php");
+  $myModel = new DBClass;
+  $mySelectList = $myModel->deleteNote($_GET['id']);
+
+  header('Location: index.php?action=klienti');
+}
+
+//editing notes
+function edit_poznamka() {
+  include_once("app/class/DBClass.php");
+  $myModel = new DBClass;
+  //getting string of old note
+  $myNote = $myModel->selectNote($_GET['id']);
+
+  $title = "Evidence zákazníků - editace poznámky";
+
+  $data = "
+  <form action='index.php?action=update_poznamka' method='post'>
+    <label> Editace poznámky:</label>
+    <input type='text' name='note' value='$myNote' size='50'>
+    <input type='hidden' name='id' value='" . $_GET['id'] . "'>
+    <input type='submit' value='Uložit'>
+  </form>\n";
+
+  require_once("app/view.php");
+}
+
+//update note
+function update_poznamka() {
+  include_once("app/class/DBClass.php");
+  $myModel = new DBClass;
+  $note = htmlspecialchars($_POST['note']);
+  $id_klient = $_POST['id'];
+  $mySelectList = $myModel->editNote($id_klient, $note);
+//  require_once("app/view.php");
+  header('Location: index.php?action=klienti');
 }
 
 

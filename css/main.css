@@ -66,11 +66,12 @@ td, th {
   padding: 5px;
 }
 
-td #edit {
-  font-size: 0.6em;
+td div#edit div.zmena, div.zmena_stavu {
+  font-size: 0.7em;
   float: right;
 /*  margin: 5px;*/
   margin-left: 5px;
+  padding: 1px;
 }
 
 td {
@@ -110,6 +111,10 @@ a {
   color: black;
 }
 
+input {
+  margin-right: 5px;
+}
+
 label.error {
   display: block;
   color: red;
@@ -127,7 +132,7 @@ label.error {
 
 #edit .zmena, .zmena_stavu {
   background-color: #eee;
-  padding: 2px;
+  padding: 5px;
   margin-right: 5px;
   display: inline;
   cursor: pointer;

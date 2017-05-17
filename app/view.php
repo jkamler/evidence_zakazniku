@@ -44,6 +44,5 @@
         echo $JSfile;
       }
       ?>
-      <script src='js/customers.js'></script>
   </body>
 </html>

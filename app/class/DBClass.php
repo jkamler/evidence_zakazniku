@@ -87,19 +87,32 @@ message
             <th>Datum vložení</th><th>Název firmy</th><th>Kontaktní osoba</th><th>E-mail</th><th>Stav</th><th>Poznámka</th>
           </tr>
         </thead>
-        <tbody>
-          ";
+        <tbody>\n\t\t\t";
 
           while($row = mysqli_fetch_assoc($result)) {
-//            $myHTML .= "<tr> <td> " . $row['datum_vl'] ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td><input type='text' name='poznamka' class='poznamka' value='" . $row['poznamka'] . "' readonly> </td> </tr>";
-//            $myHTML .= "<tr> <td> " . date('d.m.Y', strtotime($row['datum_vl'])) ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td><input type='text' name='poznamka' id='" . $row['id_klient'] . "' class='poznamka' value='" . $row['poznamka'] . "' readonly> </td> </tr>";
-            $myHTML .= "<tr> <td> " . date('d.m.Y', strtotime($row['datum_vl'])) ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] .
-            " </td> <td> " . $row['stav'] . " </td> <td> " . $row['poznamka'] .   "<div id='edit'> <div class='zmena' id='editace'>Edit</div><div class='zmena' id='mazani'>X</div> </div> </td> </tr>";
+//            $myHTML .= "<tr> <td> " . date('d.m.Y', strtotime($row['datum_vl'])) ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td> " . $row['poznamka'] .   "<div id='edit'> <div class='zmena' id='editace'>Edit</div><div class='zmena' id='mazani'>X</div> </div> </td> </tr>\n\t\t\t";
+            $myHTML .= "
+            <tr>
+              <td> " . date('d.m.Y', strtotime($row['datum_vl'])) ." </td>
+              <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td>
+              <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td>
+              <td> " . $row['poznamka'] .   "
+                <div id='edit'>
+                  <div class='zmena' id='editace'>
+                    <a href='index.php?action=edit_poznamka&id=" . $row['id_klient'] . "'>Edit</a>
+                  </div>
+                  <div class='zmena' id='mazani'>
+                    <a href='index.php?action=delete_poznamka&id=" . $row['id_klient'] . "' onClick='return confirm(\"Opravdu smazat?\")'>X</a>
+                  </div>
+                </div>
+              </td>
+            </tr>\n\t\t\t";
 
+
+//<a href='index.php?action=delete_stav&id=53' onClick='return confirm("Opravdu smazat?")'>
           }
 
-          $myHTML .=
-        "</tbody>
+          $myHTML .="</tbody>
       </table>
       ";
 
@@ -189,6 +202,140 @@ message
     }
 
 
+
+    /*
+    Function for editing notes in customers management
+
+    @param integer $id
+    id of customer where I am going to edit note
+
+    @param string $val
+    string of updated note
+
+    @return boolean || string
+    0 - error || 1 - OK
+    */
+
+        public function editNote($id_klient, $note) {
+
+          try{
+      			require_once ("app/class/configClass.php");
+      			$conn = mysqli_connect(configClass::SERVERNAME, configClass::USERNAME, configClass::PASSWORD, configClass::DBNAME);
+      			if (!$conn) {
+      				throw new ExceptionConn;
+      			}
+            mysqli_set_charset($conn, 'utf8');
+            $sql = "UPDATE klienti SET poznamka='$note' WHERE id_klient = $id_klient;";
+
+            $result = mysqli_query($conn, $sql);
+            if (!$result) {
+              throw new ExceptionQuery;
+            }
+            self::logEvents($sql);
+      			mysqli_close($conn);
+      			return 1;
+      		}
+      		catch(ExceptionConn $e) {
+      			self::logEvents("Chyba: nepovedlo se pripojit k DB: " . mysqli_connect_error() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+      			return 0;
+      		}
+      		catch(ExceptionQuery $e) {
+      			mysqli_close($conn);
+      			self::logEvents("Chyba: nepovedlo se provest dotaz: " . $sql . "<br>" . mysqli_error($conn) . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+      			return 0;
+      		}
+      		catch(Exception $e) {
+      			self::logEvents( "Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+      			return 0;
+      		}
+      		catch(Error $e) {
+      			self::logEvents("Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+      			return 0;
+          }
+        }
+
+
+        /*
+        Function for select string of edited note in customers management
+
+        @param integer $id
+        id of custome where I am going to edit note
+
+        @return boolean || string
+        0 - error || 1 - OK
+        */
+
+            public function selectNote($id) {
+              require_once ("app/class/configClass.php");
+        			$conn = mysqli_connect(configClass::SERVERNAME, configClass::USERNAME, configClass::PASSWORD, configClass::DBNAME);
+        			if (!$conn) {
+                self::logEvents("Chyba: nepovedlo se pripojit k DB: " . mysqli_connect_error() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+        				exit("nepovedlo se pripojit k BD");
+        			}
+              mysqli_set_charset($conn, 'utf8');
+              $sql = "SELECT poznamka FROM klienti WHERE id_klient = '$id';";
+              $result = mysqli_query($conn, $sql);
+              if (!$result) {
+                self::logEvents("Chyba: nepovedlo se provest dotaz: " . $sql . "<br>" . mysqli_error($conn) . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+        				exit("nepovedlo se provest dotaz");
+              }
+        			mysqli_close($conn);
+              $result = mysqli_fetch_array($result);
+              return $result[0];
+            }
+
+
+
+    /*
+    Function for deleting notes in customers management
+
+    @param integer $id
+    id of custome where I am going to remove note
+
+    @return boolean || string
+    0 - error || 1 - OK
+    */
+
+        public function deleteNote($id) {
+
+          try{
+      			require_once ("app/class/configClass.php");
+      			$conn = mysqli_connect(configClass::SERVERNAME, configClass::USERNAME, configClass::PASSWORD, configClass::DBNAME);
+      			if (!$conn) {
+      				throw new ExceptionConn;
+      			}
+            mysqli_set_charset($conn, 'utf8');
+            $sql = "UPDATE klienti SET poznamka='' WHERE id_klient = $id;";
+
+            $result = mysqli_query($conn, $sql);
+            if (!$result) {
+              throw new ExceptionQuery;
+            }
+            self::logEvents($sql);
+      			mysqli_close($conn);
+      			return 1;
+      		}
+      		catch(ExceptionConn $e) {
+      			self::logEvents("Chyba: nepovedlo se pripojit k DB: " . mysqli_connect_error() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+      			return 0;
+      		}
+      		catch(ExceptionQuery $e) {
+      			mysqli_close($conn);
+      			self::logEvents("Chyba: nepovedlo se provest dotaz: " . $sql . "<br>" . mysqli_error($conn) . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+      			return 0;
+      		}
+      		catch(Exception $e) {
+      			self::logEvents( "Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+      			return 0;
+      		}
+      		catch(Error $e) {
+      			self::logEvents("Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+      			return 0;
+          }
+
+        }
+
+
 /*
 Function for inserting new state of customer into DB
 
@@ -272,8 +419,7 @@ Value of new state
         while($row = mysqli_fetch_assoc($result)) {
           $myHTML .=
         "<tr>
-          <!--td>" . $row['stav'] . "</td><td><span class='edit' id='" . $row['id_stav'] . "'>E</span></td> <td> <a href='index.php?action=delete_stav&id=" . $row['id_stav'] . "' onClick='return confirm("."\""."Opravdu smazat?\")'>S</a></td-->
-          <td>" . $row['stav'] . "<div id='edit'> <div class='zmena_stavu' id='" . $row['id_stav'] . "'>Edit</div><div class='zmena' id='mazani'><a href='index.php?action=delete_stav&id=" . $row['id_stav'] . "' onClick='return confirm("."\""."Opravdu smazat?\")'>X</a></div></div></td>          
+          <td>" . $row['stav'] . "<div id='edit'> <div class='zmena_stavu' id='" . $row['id_stav'] . "'>Edit</div><div class='zmena' id='mazani'><a href='index.php?action=delete_stav&id=" . $row['id_stav'] . "' onClick='return confirm("."\""."Opravdu smazat?\")'>X</a></div></div></td>
         </tr>
         ";
         }
@@ -408,7 +554,6 @@ id of state which I am going to remove
   			self::logEvents("Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
   			return 0;
       }
-
     }
 
     /*

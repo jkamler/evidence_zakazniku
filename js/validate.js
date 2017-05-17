@@ -31,6 +31,7 @@ $('#insertstates').validate({
     },
     email: 'Zadejte platný email',
     telefon: 'Maximální délka je 20 znaků',
-    poznamka: 'Maximální délka je 50 znaků'
+    poznamka: 'Maximální délka je 50 znaků',
+    states: 'Vyberte stav klienta'
   }
 });
