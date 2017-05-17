@@ -92,7 +92,9 @@ message
 
           while($row = mysqli_fetch_assoc($result)) {
 //            $myHTML .= "<tr> <td> " . $row['datum_vl'] ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td><input type='text' name='poznamka' class='poznamka' value='" . $row['poznamka'] . "' readonly> </td> </tr>";
-            $myHTML .= "<tr> <td> " . date('d.m.Y', strtotime($row['datum_vl'])) ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td><input type='text' name='poznamka' id='" . $row['id_klient'] . "' class='poznamka' value='" . $row['poznamka'] . "' readonly> </td> </tr>";
+//            $myHTML .= "<tr> <td> " . date('d.m.Y', strtotime($row['datum_vl'])) ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td><input type='text' name='poznamka' id='" . $row['id_klient'] . "' class='poznamka' value='" . $row['poznamka'] . "' readonly> </td> </tr>";
+            $myHTML .= "<tr> <td> " . date('d.m.Y', strtotime($row['datum_vl'])) ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] .
+            " </td> <td> " . $row['stav'] . " </td> <td> " . $row['poznamka'] .   "<div id='edit'> <div class='zmena' id='editace'>Edit</div><div class='zmena' id='mazani'>X</div> </div> </td> </tr>";
 
           }
 
@@ -260,7 +262,8 @@ Value of new state
     <table>
       <thead>
         <tr>
-          <th>Stav klienta</th><th>Editace</th><th>Smazat</th>
+          <!--th>Stav klienta</th><th>Editace</th><th>Smazat</th-->
+          <th>Stav klienta</th>
         </tr>
       </thead>
       <tbody>
@@ -269,11 +272,12 @@ Value of new state
         while($row = mysqli_fetch_assoc($result)) {
           $myHTML .=
         "<tr>
-          <td>" . $row['stav'] . "</td><td><span class='edit' id='" . $row['id_stav'] . "'>E</span></td> <td> <a href='index.php?action=delete_stav&id=" . $row['id_stav'] . "' onClick='return confirm("."\""."Opravdu smazat?\")'>S</a></td>
+          <!--td>" . $row['stav'] . "</td><td><span class='edit' id='" . $row['id_stav'] . "'>E</span></td> <td> <a href='index.php?action=delete_stav&id=" . $row['id_stav'] . "' onClick='return confirm("."\""."Opravdu smazat?\")'>S</a></td-->
+          <td>" . $row['stav'] . "<div id='edit'> <div class='zmena_stavu' id='" . $row['id_stav'] . "'>Edit</div><div class='zmena' id='mazani'><a href='index.php?action=delete_stav&id=" . $row['id_stav'] . "' onClick='return confirm("."\""."Opravdu smazat?\")'>X</a></div></div></td>          
         </tr>
         ";
         }
-
+//"<div id='edit'> <div class='zmena' id='editace'>Edit</div><div class='zmena' id='mazani'>X</div> </div>"
         $myHTML .=
       "</tbody>
     </table>

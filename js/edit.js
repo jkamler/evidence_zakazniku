@@ -1,4 +1,5 @@
-$("span.edit").click(function(event){
+//$("span.edit").click(function(event){
+$("div.zmena_stavu").click(function(event){
   //value of id
   var id = event.target.id;
   //new value of state

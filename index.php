@@ -126,11 +126,7 @@ function klienti() {
   </div>";
 
   //edit notes
-  $data .= "<div id='edit'>
-    <div class='zmena' id='editace'>Editovat poznámku</div><div class='zmena' id='mazani'>Smazat poznámku</div>
-  </div>
-
-  ";
+//  $data .= "<div id='edit'> <div class='zmena' id='editace'>Edit</div><div class='zmena' id='mazani'>X</div> </div>";
 
   //search customers
   $selectList = $myModel->selectListStates();
@@ -233,10 +229,10 @@ function delete_stav() {
   header('Location: index.php?action=stavy');
 }
 
+//editing state of customer
 function edit_stav() {
   include_once("app/class/DBClass.php");
   $myModel = new DBClass;
-  echo "cau";
   //I am getting this variables via AJAX at edit.js
   $myModel->updateState($_GET["id"], $_GET["value"]);
 
