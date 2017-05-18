@@ -1,4 +1,6 @@
 <?php
+//controller
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -9,7 +11,7 @@ if (isset($_GET["action"])) {
   $action = "index";
 }
 
-//tomuhle nerozumim proc to funguje. V $action je retezec a kdyz za nej dam zavorku, tak mi spusti danou funkci - tzn. if pod tim nemusi byt
+//tomuhle nerozumim proc to funguje. V $action je retezec a kdyz za nej dam zavorku, tak mi spusti danou funkci - tzn. ty if pod tim nemusi byt
 /*echo $action();*/
 
 //vyber funkce podle $action
@@ -31,6 +33,9 @@ if ($action == "delete_stav") {
 if ($action == "edit_stav") {
   return edit_stav();
 }
+if ($action == "update_stav") {
+  return update_stav();
+}
 if ($action == "new_klient") {
   return new_klient();
 }
@@ -46,6 +51,7 @@ if ($action == "edit_poznamka") {
 if ($action == "update_poznamka") {
   return update_poznamka();
 }
+
 
 
 
@@ -219,7 +225,7 @@ function new_klient() {
   require_once("app/view.php");
 }
 
-//calls function for insert
+//calls function for insert of new client
 function insert_new_klient() {
   $nazev = isset($_POST['nazev']) ? htmlspecialchars($_POST['nazev']) : "";
   $kontakt = isset($_POST['kontakt']) ? htmlspecialchars($_POST['kontakt']) : "";
@@ -280,10 +286,18 @@ function delete_stav() {
 function edit_stav() {
   include_once("app/class/DBClass.php");
   $myModel = new DBClass;
-  //I am getting this variables via AJAX at edit.js
-  $myModel->updateState($_GET["id"], $_GET["value"]);
+  $myModel->updateState($_POST["id"], $_POST["stav"]);
+  header('Location: index.php?action=stavy');
+}
 
-//  header('Location: index.php?action=stavy');
+//loading form for update state name
+function update_stav() {
+  $title = "Evidence zákazníků - Editace stavu zákazníka";
+  include_once("app/class/DBClass.php");
+  $myModel = new DBClass;
+  //getting string of old state
+  $data = $myModel->updateStateForm($_GET['id']);
+  require_once("app/view.php");
 }
 
 ?>

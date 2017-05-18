@@ -24,10 +24,10 @@ $('#insertstates').validate({
   messages: {
     nazev: {
       required:'Vložte prosím název klienta',
-      maxlength:'Zkraťte název na max. 20 znaků'
+      maxlength:'Maximální délka je 20 znaků'
     },
     kontakt: {
-      maxlength:'Zkraťte jméno na max. 20 znaků'
+      maxlength:'Maximální délka je 20 znaků'
     },
     email: 'Zadejte platný email',
     telefon: 'Maximální délka je 20 znaků',

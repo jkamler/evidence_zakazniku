@@ -1,4 +1,6 @@
-//$("span.edit").click(function(event){
+/*
+//tohle jsem nakonec zrusil, aby vsechny update byly udelany jednotne pres odeslani formulare
+
 $("div.zmena_stavu").click(function(event){
   //value of id
   var id = event.target.id;
@@ -18,3 +20,4 @@ $("div.zmena_stavu").click(function(event){
      }
   });
 });
+*/

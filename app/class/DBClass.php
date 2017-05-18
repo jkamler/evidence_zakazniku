@@ -20,29 +20,83 @@ message
     file_put_contents($file, $current);
   }
 
+
+/*
+Function for DB queries
+
+@param string $sql
+SQL query
+
+@return object
+result of query
+*/
+
+  public function myQuery($sql) {
+    try{
+      require_once ("app/class/configClass.php");
+      $conn = mysqli_connect(configClass::SERVERNAME, configClass::USERNAME, configClass::PASSWORD, configClass::DBNAME);
+      if (!$conn) {
+        throw new ExceptionConn;
+      }
+      mysqli_set_charset($conn, 'utf8');
+      $result = mysqli_query($conn, $sql);
+      if (!$result) {
+        throw new ExceptionQuery;
+      }
+      self::logEvents($sql);
+      return $result;
+    }
+    catch(ExceptionConn $e) {
+      self::logEvents("Chyba: nepovedlo se pripojit k DB: " . mysqli_connect_error() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+      return 0;
+    }
+    catch(ExceptionQuery $e) {
+      mysqli_close($conn);
+      self::logEvents("Chyba: nepovedlo se provest dotaz: " . $sql . "<br>" . mysqli_error($conn) . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+      return 0;
+    }
+    catch(Exception $e) {
+      self::logEvents("Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+      return 0;
+    }
+    catch(Error $e) {
+      self::logEvents("Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+      return 0;
+    }
+
+  }
+
+
   /*
   Function for counting customes
 
-  @return numeric $count
+  @return numeric
   Total count of customers
   */
-    public function countCustomers() {
-			require_once ("app/class/configClass.php");
-			$conn = mysqli_connect(configClass::SERVERNAME, configClass::USERNAME, configClass::PASSWORD, configClass::DBNAME);
-			if (!$conn) {
-        self::logEvents("Chyba: nepovedlo se pripojit k DB: " . mysqli_connect_error() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
-				exit("nepovedlo se pripojit k BD");
-			}
-      mysqli_set_charset($conn, 'utf8');
-      $sql = "SELECT count(*) FROM klienti;";
-      $result = mysqli_query($conn, $sql);
-      if (!$result) {
-        self::logEvents("Chyba: nepovedlo se provest dotaz: " . $sql . "<br>" . mysqli_error($conn) . ". File: " . $e->getFile() . ", line: " . $e->getLine());
-				exit("nepovedlo se provest dotaz");
+
+  public function countCustomers() {
+    $sql = "SELECT count(*) FROM klienti;";
+    $result = self::myQuery($sql);
+    $result = mysqli_fetch_array($result);
+    return $result[0];
+  }
+
+
+
+    /*
+    Function for selecting IDs of states, which are used in customers table
+
+    @return array
+    array of IDs of states, which are used in customers table
+    */
+    public function selectIdStates() {
+      $sql = "SELECT DISTINCT id_stav FROM klienti;";
+      $result = self::myQuery($sql);
+      $id_states = array();
+      while($row = mysqli_fetch_assoc($result)) {
+        $id_states[] = $row['id_stav'];
       }
-			mysqli_close($conn);
-      $result = mysqli_fetch_array($result);
-      return $result[0];
+      return $id_states;
     }
 
 
@@ -90,7 +144,6 @@ message
         <tbody>\n\t\t\t";
 
           while($row = mysqli_fetch_assoc($result)) {
-//            $myHTML .= "<tr> <td> " . date('d.m.Y', strtotime($row['datum_vl'])) ." </td> <td> " . $row['nazev'] ." </td> <td>" . $row['kontakt'] . " </td> <td> " . $row['email'] . " </td> <td> " . $row['stav'] . " </td> <td> " . $row['poznamka'] .   "<div id='edit'> <div class='zmena' id='editace'>Edit</div><div class='zmena' id='mazani'>X</div> </div> </td> </tr>\n\t\t\t";
             $myHTML .= "
             <tr>
               <td> " . date('d.m.Y', strtotime($row['datum_vl'])) ." </td>
@@ -107,9 +160,6 @@ message
                 </div>
               </td>
             </tr>\n\t\t\t";
-
-
-//<a href='index.php?action=delete_stav&id=53' onClick='return confirm("Opravdu smazat?")'>
           }
 
           $myHTML .="</tbody>
@@ -403,13 +453,16 @@ Value of new state
           throw new ExceptionQuery;
         }
         self::logEvents($sql);
+
+        //getting all used id_stav at klienti table
+        $idStates = self::selectIdStates();
+
         //building HTML table
         $myHTML = "
   <div class='table'>
     <table>
       <thead>
         <tr>
-          <!--th>Stav klienta</th><th>Editace</th><th>Smazat</th-->
           <th>Stav klienta</th>
         </tr>
       </thead>
@@ -419,11 +472,29 @@ Value of new state
         while($row = mysqli_fetch_assoc($result)) {
           $myHTML .=
         "<tr>
-          <td>" . $row['stav'] . "<div id='edit'> <div class='zmena_stavu' id='" . $row['id_stav'] . "'>Edit</div><div class='zmena' id='mazani'><a href='index.php?action=delete_stav&id=" . $row['id_stav'] . "' onClick='return confirm("."\""."Opravdu smazat?\")'>X</a></div></div></td>
+          <td>" . $row['stav'] . "
+            <div id='edit'>
+              <div class='zmena_stavu' id='editace'>
+                <a href='index.php?action=update_stav&id=" . $row['id_stav'] . "'>
+                  Edit
+                </a>
+              </div>";
+
+
+          //if state of customer is assigned to some customer, I can NOT delete this state
+          if (!in_array($row['id_stav'], $idStates)) {
+            $myHTML .= "    <div class='zmena' id='mazani'>
+                <a href='index.php?action=delete_stav&id=" . $row['id_stav'] . "' onClick='return confirm("."\""."Opravdu smazat?\")'>
+                  X
+                </a>
+              </div>";
+          }
+          $myHTML .= "
+            </div>
+          </td>
         </tr>
         ";
         }
-//"<div id='edit'> <div class='zmena' id='editace'>Edit</div><div class='zmena' id='mazani'>X</div> </div>"
         $myHTML .=
       "</tbody>
     </table>
@@ -451,6 +522,64 @@ Value of new state
   			return 0;
       }
     }
+
+
+    /*
+    Form for update name of state
+
+
+    */
+
+      public function updateStateForm($id_state) {
+        try{
+    			require_once ("app/class/configClass.php");
+    			$conn = mysqli_connect(configClass::SERVERNAME, configClass::USERNAME, configClass::PASSWORD, configClass::DBNAME);
+    			if (!$conn) {
+    				throw new ExceptionConn;
+    			}
+          mysqli_set_charset($conn, 'utf8');
+
+          $sql = "SELECT stav FROM stavy WHERE id_stav = '$id_state';";
+
+          $result = mysqli_query($conn, $sql);
+          if (!$result) {
+            throw new ExceptionQuery;
+          }
+
+          $stav = mysqli_fetch_assoc($result);
+
+          $myHTML = "
+          <div class='input_form'>
+            <form action='index.php?action=edit_stav' method='post'>
+              Stav: <input type='text' name='stav' value='" . $stav['stav'] . "'>
+              <input type='hidden' name='id' value='$id_state'>
+              <input type='submit' value='Vložit'>
+            </form>
+          </div>
+          ";
+
+          mysqli_close($conn);
+    			return $myHTML;
+    		}
+    		catch(ExceptionConn $e) {
+    			self::logEvents("Chyba: nepovedlo se pripojit k DB: " . mysqli_connect_error() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+    			return 0;
+    		}
+    		catch(ExceptionQuery $e) {
+    			mysqli_close($conn);
+    			self::logEvents("Chyba: nepovedlo se provest dotaz: " . $sql . "<br>" . mysqli_error($conn) . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+    			return 0;
+    		}
+    		catch(Exception $e) {
+          self::logEvents("Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+    			return 0;
+    		}
+    		catch(Error $e) {
+    			self::logEvents("Chyba: " . $e->getMessage() . ". File: " . $e->getFile() . ", line: " . $e->getLine());
+    			return 0;
+        }
+      }
+
 
 
     /*
@@ -557,7 +686,7 @@ id of state which I am going to remove
     }
 
     /*
-    Function for updating state of customers
+    Function for updating state of customers at DB
 
     @param integer $id
     id of state which I am going to remove
