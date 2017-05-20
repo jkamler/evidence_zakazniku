@@ -5,51 +5,44 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-if (isset($_GET["action"])) {
+//$action exist and is not empty
+if ((isset($_GET["action"])) && ($_GET['action']) != "" ) {
   $action = $_GET["action"];
 } else { //default action is index
   $action = "index";
 }
 
-//tomuhle nerozumim proc to funguje. V $action je retezec a kdyz za nej dam zavorku, tak mi spusti danou funkci - tzn. ty if pod tim nemusi byt
+
+//tomuhle nerozumim proc to funguje. V $action je retezec a kdyz za nej dam zavorku, tak mi spusti danou funkci - tzn. funguje to podobne jako ty ify podtim
 /*echo $action();*/
 
-//vyber funkce podle $action
+//selecting function by action value
 if ($action == "index") {
   return index();
-}
-if ($action == "klienti") {
+} else if ($action == "klienti") {
   return klienti();
-}
-if ($action == "stavy") {
+} else if ($action == "stavy") {
   return stavy();
-}
-if ($action == "insert_stav") {
+} else if ($action == "insert_stav") {
   return insert_stav();
-}
-if ($action == "delete_stav") {
+} else if ($action == "delete_stav") {
   return delete_stav();
-}
-if ($action == "edit_stav") {
+} else if ($action == "edit_stav") {
   return edit_stav();
-}
-if ($action == "update_stav") {
+} else if ($action == "update_stav") {
   return update_stav();
-}
-if ($action == "new_klient") {
+} else if ($action == "new_klient") {
   return new_klient();
-}
-if ($action == "insert_new_klient") {
+} else if ($action == "insert_new_klient") {
   return insert_new_klient();
-}
-if ($action == "delete_poznamka") {
+} else if ($action == "delete_poznamka") {
   return delete_poznamka();
-}
-if ($action == "edit_poznamka") {
+} else if ($action == "edit_poznamka") {
   return edit_poznamka();
-}
-if ($action == "update_poznamka") {
+} else if ($action == "update_poznamka") {
   return update_poznamka();
+} else {
+  return index();
 }
 
 
